@@ -57,5 +57,5 @@ export default defineConfig({
     ]
   },
   build: { outDir: distFolder },
-  base,
+  base: '/wedding/',
 })

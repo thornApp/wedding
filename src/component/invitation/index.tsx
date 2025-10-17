@@ -1,4 +1,4 @@
-import { Fragment } from "react/jsx-runtime"
+import React, { useEffect, useState, Fragment } from "react"
 import {
   BRIDE_FULLNAME,
   BRIDE_INFO,
@@ -16,11 +16,38 @@ import { Button } from "../button"
 import { LazyDiv } from "../lazyDiv"
 import PhoneIcon from "../../icons/phone-flip-icon.svg?react"
 import EnvelopeIcon from "../../icons/envelope-icon.svg?react"
+import bgm from "../../bgm/bgm.mp3" // BGM 파일 import
 
 export const Invitation = () => {
   const { openModal, closeModal } = useModal()
+
+  // BGM 상태 관리
+  const [audio] = useState(new Audio(bgm))
+  const [playing, setPlaying] = useState(false)
+
+  useEffect(() => {
+    audio.loop = true
+  }, [audio])
+
+  const toggleBgm = () => {
+    if (playing) {
+      audio.pause()
+      setPlaying(false)
+    } else {
+      audio.play().catch(() => console.log("브라우저 자동 재생 제한됨"))
+      setPlaying(true)
+    }
+  }
+
   return (
     <LazyDiv className="card invitation">
+      {/* BGM 버튼 */}
+      <div style={{ textAlign: "center", marginBottom: "10px" }}>
+        <Button onClick={toggleBgm}>
+          {playing ? "Pause BGM" : "Play BGM"}
+        </Button>
+      </div>
+
       <h2 className="english">Invitation</h2>
 
       <div className="break" />
