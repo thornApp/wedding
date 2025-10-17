@@ -16,17 +16,36 @@ import { Button } from "../button"
 import { LazyDiv } from "../lazyDiv"
 import PhoneIcon from "../../icons/phone-flip-icon.svg?react"
 import EnvelopeIcon from "../../icons/envelope-icon.svg?react"
-import bgm from "../../bgm/bgm.mp3" // BGM 파일 import
 
-export const Invitation = () => {
+// BGM은 public 폴더에 넣고 절대 경로 사용
+const BGM_URL = "/wedding/bgm.mp3"
+
+// HTMLAudioElement 확장 타입 (playsInline 허용)
+interface AudioWithPlaysInline extends HTMLAudioElement {
+  playsInline?: boolean
+}
+
+export const Invitation: React.FC = () => {
   const { openModal, closeModal } = useModal()
 
   // BGM 상태 관리
-  const [audio] = useState(new Audio(bgm))
+  const [audio] = useState<AudioWithPlaysInline>(() => new Audio(BGM_URL))
   const [playing, setPlaying] = useState(false)
 
   useEffect(() => {
     audio.loop = true
+    audio.autoplay = true
+    audio.playsInline = true
+    audio.muted = false
+
+    audio
+      .play()
+      .then(() => setPlaying(true))
+      .catch(() => console.log("브라우저 자동 재생 제한됨"))
+
+    return () => {
+      audio.pause()
+    }
   }, [audio])
 
   const toggleBgm = () => {
@@ -34,14 +53,16 @@ export const Invitation = () => {
       audio.pause()
       setPlaying(false)
     } else {
-      audio.play().catch(() => console.log("브라우저 자동 재생 제한됨"))
-      setPlaying(true)
+      audio
+        .play()
+        .then(() => setPlaying(true))
+        .catch(() => console.log("브라우저 자동 재생 제한됨"))
     }
   }
 
   return (
     <LazyDiv className="card invitation">
-      {/* BGM 버튼 */}
+      {/* BGM Play/Pause 버튼 */}
       <div style={{ textAlign: "center", marginBottom: "10px" }}>
         <Button onClick={toggleBgm}>
           {playing ? "Pause BGM" : "Play BGM"}
@@ -82,6 +103,7 @@ export const Invitation = () => {
 
       <div className="break" />
 
+      {/* 연락하기 버튼 */}
       <Button
         onClick={() => {
           openModal({
@@ -106,15 +128,13 @@ export const Invitation = () => {
                         <div>
                           <PhoneIcon
                             className="flip icon"
-                            onClick={() => {
-                              window.open(`tel:${phone}`, "_self")
-                            }}
+                            onClick={() => window.open(`tel:${phone}`, "_self")}
                           />
                           <EnvelopeIcon
                             className="icon"
-                            onClick={() => {
+                            onClick={() =>
                               window.open(`sms:${phone}`, "_self")
-                            }}
+                            }
                           />
                         </div>
                       </Fragment>
@@ -130,15 +150,13 @@ export const Invitation = () => {
                         <div>
                           <PhoneIcon
                             className="flip icon"
-                            onClick={() => {
-                              window.open(`tel:${phone}`, "_self")
-                            }}
+                            onClick={() => window.open(`tel:${phone}`, "_self")}
                           />
                           <EnvelopeIcon
                             className="icon"
-                            onClick={() => {
+                            onClick={() =>
                               window.open(`sms:${phone}`, "_self")
-                            }}
+                            }
                           />
                         </div>
                       </Fragment>
