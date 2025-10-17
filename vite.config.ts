@@ -26,6 +26,7 @@ try {
 
 // https://vite.dev/config/
 export default defineConfig({
+  base: '/wedding-invitaion/',
   plugins: [
     react(),
     svgr(),
