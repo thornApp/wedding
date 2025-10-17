@@ -63,20 +63,19 @@ export const Cover: React.FC = () => {
 
   return (
     <LazyDiv className="card cover">
-      <div className="wedding-date" style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-        <div>
+      <div className="wedding-date-wrapper" style={{ display: "flex", alignItems: "center", gap: "20px" }}>
+        <div className="wedding-date" style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
           {WEDDING_DATE.format("YYYY")}
           <div className="divider" />
           {WEDDING_DATE.format("MM")}
           <div className="divider" />
           {WEDDING_DATE.format("DD")}
         </div>
-        {/* Play/Pause 버튼 우측에 배치 */}
-        <Button onClick={toggleBgm}>
+
+        <Button className="play-bgm-button" onClick={toggleBgm} style={{ height: "fit-content" }} >
           {playing ? "Pause BGM" : "Play BGM"}
         </Button>
       </div>
-
       <div className="wedding-day-of-week">
         {DAY_OF_WEEK[WEDDING_DATE.day()]}
       </div>
