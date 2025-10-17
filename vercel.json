@@ -1,0 +1,5 @@
+{
+  "rewrites": [
+    { "source": "/wedding-invitation/(.*)", "destination": "/wedding-invitation/index.html" }
+  ]
+}
