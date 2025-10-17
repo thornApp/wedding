@@ -53,7 +53,7 @@ export const Invitation = () => {
       <div className="break" />
 
       <div className="content">싱그러운 여름 향기 가득한 날</div>
-      <div className="content">소중한 분들을 모시고</div>
+      <div className="content">소중한 dasdsadasdasdsa고</div>
       <div className="content">사랑의 약속을 하려고 합니다.</div>
       <div className="break" />
       <div className="content">햇살이 뜨거울 땐 가려주고,</div>
