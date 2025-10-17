@@ -63,8 +63,8 @@ export const Cover: React.FC = () => {
 
   return (
     <LazyDiv className="card cover">
-      <div className="wedding-date-wrapper" style={{ display: "flex", alignItems: "center", gap: "20px" }}>
-        <div className="wedding-date" style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+      <div className="wedding-date-wrapper" style={{ display: "flex", flexDirection: "column-reverse", alignItems: "center", gap: "20px" }}>
+        <div className="wedding-date" style={{ display: "flex", alignItems: "center" }}>
           {WEDDING_DATE.format("YYYY")}
           <div className="divider" />
           {WEDDING_DATE.format("MM")}
