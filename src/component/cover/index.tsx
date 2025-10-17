@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from "react"
 import {
   BRIDE_FULLNAME,
   GROOM_FULLNAME,
@@ -7,6 +8,15 @@ import {
 } from "../../const"
 import { COVER_IMAGE } from "../../images"
 import { LazyDiv } from "../lazyDiv"
+import { Button } from "../button"
+
+// BGM public 폴더 경로
+const BGM_URL = "/wedding/bgm.mp3"
+
+// HTMLAudioElement 확장 타입
+interface AudioWithPlaysInline extends HTMLAudioElement {
+  playsInline?: boolean
+}
 
 const DAY_OF_WEEK = [
   "Sunday",
@@ -18,16 +28,55 @@ const DAY_OF_WEEK = [
   "Saturday",
 ]
 
-export const Cover = () => {
+export const Cover: React.FC = () => {
+  // BGM 상태
+  const [audio] = useState<AudioWithPlaysInline>(() => new Audio(BGM_URL))
+  const [playing, setPlaying] = useState(false)
+
+  useEffect(() => {
+    audio.loop = true
+    audio.autoplay = true
+    audio.playsInline = true
+    audio.muted = false
+
+    audio
+      .play()
+      .then(() => setPlaying(true))
+      .catch(() => console.log("브라우저 자동 재생 제한됨"))
+
+    return () => {
+      audio.pause()
+    }
+  }, [audio])
+
+  const toggleBgm = () => {
+    if (playing) {
+      audio.pause()
+      setPlaying(false)
+    } else {
+      audio
+        .play()
+        .then(() => setPlaying(true))
+        .catch(() => console.log("브라우저 자동 재생 제한됨"))
+    }
+  }
+
   return (
     <LazyDiv className="card cover">
-      <div className="wedding-date">
-        {WEDDING_DATE.format("YYYY")}
-        <div className="divider" />
-        {WEDDING_DATE.format("MM")}
-        <div className="divider" />
-        {WEDDING_DATE.format("DD")}
+      <div className="wedding-date" style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+        <div>
+          {WEDDING_DATE.format("YYYY")}
+          <div className="divider" />
+          {WEDDING_DATE.format("MM")}
+          <div className="divider" />
+          {WEDDING_DATE.format("DD")}
+        </div>
+        {/* Play/Pause 버튼 우측에 배치 */}
+        <Button onClick={toggleBgm}>
+          {playing ? "Pause BGM" : "Play BGM"}
+        </Button>
       </div>
+
       <div className="wedding-day-of-week">
         {DAY_OF_WEEK[WEDDING_DATE.day()]}
       </div>
