@@ -20,34 +20,22 @@ export const Location = () => {
           <div className="transportation-icon-wrapper">
             <BusIcon className="transportation-icon" />
           </div>
-          <div className="heading">대중교통</div>
+          <div className="heading">셔틀버스</div>
           <div />
           <div className="content">
-            * 지하철 이용시
+            <b>천안터미널 출발</b> → <b>천안역 경유</b> → <b>베리컨벤션 도착</b>
             <br />
-            지하철 2호선 <b>낙성대역 4번출구</b> 나와서
+            오전 10시부터 30분 간격으로 운행( 천안터미널 기준 )
             <br />
-            → 첫번째 골목 끼고 좌회전
-            <br />→ 마을버스 <b>관악 02번</b> 승차
-            <br />→ <b>서울대후문·연구공원 정류장</b> 하차
+            <b>* 천안터미널 탑승장소</b>
             <br />
-            → 길 건너 간판 참고해 도보로 100m 이동
+            천안터미널 신세계백화점옆 "올리브영" 매장 앞
             <br />
-            검은색 피라미드 유리 건물입니다.
+            <b>* 천안역 탑승장소</b>
+            <br />
+            천안역 1번출구 동부광장 횡단보도 건너편 "빈폴매장"옆의 "GS25 편의점" 앞
           </div>
           <div />
-          <div className="content">
-            * 버스 이용 시
-            <br />
-            - 간선(파랑): 461, 641
-            <br />
-            - 지선(초록): 5413, 5524, 5528
-            <br />
-            반드시 <b>낙성대입구</b> 하차
-            <br />→ 마을버스 <b>관악 02번</b> 이용
-            <br />
-            이하 위와 동일합니다.
-          </div>
         </div>
         <div className="location-info">
           <div className="transportation-icon-wrapper">
@@ -58,17 +46,16 @@ export const Location = () => {
           <div className="content">
             네이버 지도, 카카오 네비, 티맵 등 이용
             <br />
-            <b>서울대학교 연구공원 웨딩홀</b> 검색
+            <b>천안 베리컨벤션</b> 검색
             <br />
             - 주차 요금은 무료입니다.
             <br />
-            (주차장 이용 시 웨딩홀과 바로 연결)
           </div>
           <div />
           <div className="content">
             <b>
-              ※ 서울대학교 정, 후문을 통과할 경우 통행료가 발생하므로
-              유의바랍니다. 낙성대 방향으로 이용해주세요.
+              ※ [천안IC]로 나와서 [천안삼거리]방면으로 5분
+              ※ [목천IC]로 나와서 [천안IC]방면으로 15분
             </b>
           </div>
         </div>

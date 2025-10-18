@@ -26,13 +26,17 @@ export const Invitation: React.FC = () => {
 
       <div className="break" />
 
-      <div className="content">비가와 오랜만에 비가오지말라 했어</div>
-      <div className="content">근데 한달간에 나도 몰래 기다렸나봐</div>
-      <div className="content">rainy day rainy day ~</div>
-      <div className="content">rainy day~ rainy day,</div>
+      <div className="content">가을이 가기 전에, 우리 결혼해요!</div>
+      <div className="content">노랗게 물든 은행잎 사이로</div>
+      <div className="content">소복소복 겨울이 오는 길목에서</div>
+      <div className="content">병전이랑 민정이가</div>
+      <div className="content">평생 손 꼭 잡기로 약속했어요.</div>
 
       <div className="break" />
-      <div className="content">오늘을 기다렸나봐 난 rainy day</div>
+
+      <div className="content">차가운 바람도 따뜻하게 녹일</div>
+      <div className="content">두 사람의 첫걸음에</div>
+      <div className="content">소중한 당신을 초대합니다.</div>
 
       <div className="break" />
 
