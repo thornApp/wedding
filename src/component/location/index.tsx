@@ -55,6 +55,7 @@ export const Location = () => {
           <div className="content">
             <b>
               ※ [천안IC]로 나와서 [천안삼거리]방면으로 5분
+              <br />
               ※ [목천IC]로 나와서 [천안IC]방면으로 15분
             </b>
           </div>
