@@ -82,7 +82,7 @@ export const Cover: React.FC = () => {
       <div className="image-wrapper">
         <img src={COVER_IMAGE} alt="sample" />
       </div>
-      <div className="subtitle">Please save the date for the marriage celebration of</div>
+      <div className="subtitle">Save the date for the wedding of</div>
       <div className="names">
         {GROOM_FULLNAME}
         <div className="divider" />
