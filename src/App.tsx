@@ -44,7 +44,6 @@ function App() {
           {!STATIC_ONLY && <GuestBook />}
         </LazyDiv>
 
-        <ShareButton />
       </div>
     </div>
   )
