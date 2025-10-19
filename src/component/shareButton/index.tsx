@@ -39,16 +39,8 @@ export const ShareButton = () => {
                 baseUrl +
                 "/preview.jpg",
               link: {
-                mobileWebUrl:
-                  window.location.protocol +
-                  "//" +
-                  window.location.host +
-                  baseUrl,
-                webUrl:
-                  window.location.protocol +
-                  "//" +
-                  window.location.host +
-                  baseUrl,
+                mobileWebUrl:"https://thornapp.github.io/wedding",
+                webUrl: "https://thornapp.github.io/wedding",
               },
             },
             buttons: [
