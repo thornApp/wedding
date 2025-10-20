@@ -1,4 +1,8 @@
 import React, { useEffect, useState } from "react"
+import Lightbox from "yet-another-react-lightbox"
+import Zoom from "yet-another-react-lightbox/plugins/zoom"
+import "yet-another-react-lightbox/styles.css"
+
 import {
   BRIDE_FULLNAME,
   GROOM_FULLNAME,
@@ -33,6 +37,10 @@ export const Cover: React.FC = () => {
   const [audio] = useState<AudioWithPlaysInline>(() => new Audio(BGM_URL))
   const [playing, setPlaying] = useState(false)
 
+  // Lightbox 상태
+  const [open, setOpen] = useState(false)
+  const [lightboxKey, setLightboxKey] = useState(0)
+
   useEffect(() => {
     audio.loop = true
     audio.autoplay = true
@@ -61,9 +69,22 @@ export const Cover: React.FC = () => {
     }
   }
 
+  // 이미지 클릭 시 Lightbox 열기
+  const handleOpen = () => {
+    setLightboxKey(prev => prev + 1) // key 변경으로 컴포넌트 새로 렌더링
+    setOpen(true)
+  }
+
+  // Lightbox 닫기
+  const handleClose = () => setOpen(false)
+
   return (
     <LazyDiv className="card cover">
-      <div className="wedding-date-wrapper" style={{ display: "flex", flexDirection: "column-reverse", alignItems: "center" }}>
+      {/* 날짜 & BGM 버튼 */}
+      <div
+        className="wedding-date-wrapper"
+        style={{ display: "flex", flexDirection: "column-reverse", alignItems: "center" }}
+      >
         <div className="wedding-date">
           {WEDDING_DATE.format("YYYY")}
           <div className="divider" />
@@ -72,16 +93,45 @@ export const Cover: React.FC = () => {
           {WEDDING_DATE.format("DD")}
         </div>
 
-        <Button className="play-bgm-button" onClick={toggleBgm} style={{ height: "fit-content", alignSelf: "end" }} >
+        <Button
+          className="play-bgm-button"
+          onClick={toggleBgm}
+          style={{ height: "fit-content", alignSelf: "end" }}
+        >
           {playing ? "Pause BGM" : "Play BGM"}
         </Button>
       </div>
-      <div className="wedding-day-of-week">
-        {DAY_OF_WEEK[WEDDING_DATE.day()]}
-      </div>
+
+      <div className="wedding-day-of-week">{DAY_OF_WEEK[WEDDING_DATE.day()]}</div>
+
+      {/* 이미지 클릭 시 전체보기 */}
       <div className="image-wrapper">
-        <img src={COVER_IMAGE} alt="sample" />
+        <img
+          src={COVER_IMAGE}
+          alt="sample"
+          style={{
+            cursor: "pointer",
+            borderRadius: "8px",
+            boxShadow: "0 4px 10px rgba(0,0,0,0.2)",
+          }}
+          onClick={handleOpen}
+        />
       </div>
+
+      {/* Lightbox 항상 렌더링, key 변경으로 반복 열기/닫기 가능 */}
+      <Lightbox
+        key={lightboxKey}
+        open={open}
+        close={handleClose}
+        slides={[{ src: COVER_IMAGE }]}
+        plugins={[Zoom]}
+        carousel={{ finite: true }} // 슬라이드가 한 장일 때 스와이프 없음
+        render={{
+          buttonPrev: () => null, // 이전 버튼 제거
+          buttonNext: () => null, // 다음 버튼 제거
+        }}
+      />
+
       <div className="subtitle">Save the date for the wedding of</div>
       <div className="names">
         {GROOM_FULLNAME}

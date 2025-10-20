@@ -1,4 +1,8 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
+import Lightbox from "yet-another-react-lightbox"
+import Zoom from "yet-another-react-lightbox/plugins/zoom"
+import "yet-another-react-lightbox/styles.css"
+
 import ArrowLeft from "../../icons/angle-left-sm.svg?react"
 import { LazyDiv } from "../lazyDiv"
 import { Button } from "../button"
@@ -7,7 +11,12 @@ import { GALLERY_IMAGES } from "../../images"
 
 const CAROUSEL_ITEMS = GALLERY_IMAGES.map((item, idx) => (
   <div className="carousel-item" key={idx}>
-    <img src={item} draggable={false} alt={`${idx}`} />
+    <img
+      src={item}
+      draggable={false}
+      alt={`${idx}`}
+      style={{ cursor: "pointer" }}
+    />
   </div>
 ))
 
@@ -35,7 +44,7 @@ export const Gallery = () => {
   const carouselRef = useRef<HTMLDivElement>({} as HTMLDivElement)
 
   useEffect(() => {
-    // preload images
+    // 이미지 프리로드
     GALLERY_IMAGES.forEach((image) => {
       const img = new Image()
       img.src = image
@@ -81,11 +90,6 @@ export const Gallery = () => {
     clickMoveRef.current = clickMove
   }
 
-  // For debugging
-  // useEffect(() => {
-  //   console.log(status)
-  // }, [status])
-
   const click = (
     status: Status,
     clientX: number,
@@ -105,11 +109,8 @@ export const Gallery = () => {
     (dragOption: DragOption, clientX: number, carouselWidth: number) => {
       let moveTranslateX = clientX - dragOption.startingClientX
 
-      if (moveTranslateX > carouselWidth) {
-        moveTranslateX = carouselWidth
-      } else if (moveTranslateX < -carouselWidth) {
-        moveTranslateX = -carouselWidth
-      }
+      if (moveTranslateX > carouselWidth) moveTranslateX = carouselWidth
+      else if (moveTranslateX < -carouselWidth) moveTranslateX = -carouselWidth
 
       setDragOption({
         ...dragOption,
@@ -122,24 +123,17 @@ export const Gallery = () => {
   const dragEnd = useCallback(
     (slide: number, dragOption: DragOption, carouselWidth: number) => {
       let move = 0
-      if (dragOption.currentTranslateX < -carouselWidth * 1.1) {
-        move = 1
-      } else if (dragOption.currentTranslateX > -carouselWidth * 0.9) {
-        move = -1
-      }
+      if (dragOption.currentTranslateX < -carouselWidth * 1.1) move = 1
+      else if (dragOption.currentTranslateX > -carouselWidth * 0.9) move = -1
 
       setDragOption({
         ...dragOption,
         currentTranslateX: -carouselWidth * (move + 1),
       })
-
       setStatus("dragEnding")
 
       setTimeout(() => {
-        setDragOption({
-          ...dragOption,
-          currentTranslateX: -carouselWidth,
-        })
+        setDragOption({ ...dragOption, currentTranslateX: -carouselWidth })
         setStatus("stationary")
         setSlide((slide + move + CAROUSEL_ITEMS.length) % CAROUSEL_ITEMS.length)
       }, 300)
@@ -147,36 +141,28 @@ export const Gallery = () => {
     [],
   )
 
-  const move = useCallback((srcIdx: number, dstIdx: number) => {
-    setSlide(dstIdx)
-    if (srcIdx < dstIdx) {
-      setStatus("moving-right")
-    } else {
-      setStatus("moving-left")
-    }
+  const move = useCallback(
+    (srcIdx: number, dstIdx: number) => {
+      setSlide(dstIdx)
+      if (srcIdx < dstIdx) setStatus("moving-right")
+      else setStatus("moving-left")
+      setMoveOption({ srcIdx, dstIdx })
+      setTimeout(() => {
+        setClickMove(null)
+        setStatus("stationary")
+      }, 300)
+    },
+    [],
+  )
 
-    setMoveOption({ srcIdx, dstIdx })
-
-    setTimeout(() => {
-      setClickMove(null)
-      setStatus("stationary")
-    }, 300)
-  }, [])
-
-  /* Events */
+  /* Mouse & Touch Events */
   const onMouseMove = useCallback(
     (e: MouseEvent) => {
       const status = statusRef.current
-
-      if (status === "clicked") {
-        setStatus("dragging")
-      } else if (status === "dragging") {
+      if (status === "clicked") setStatus("dragging")
+      else if (status === "dragging") {
         e.preventDefault()
-        dragging(
-          dragOptionRef.current,
-          e.clientX,
-          carouselRef.current.clientWidth,
-        )
+        dragging(dragOptionRef.current, e.clientX, carouselRef.current.clientWidth)
       }
     },
     [dragging],
@@ -185,18 +171,12 @@ export const Gallery = () => {
   const onTouchMove = useCallback(
     (e: TouchEvent) => {
       const status = statusRef.current
-
       if (status === "clicked") {
         e.preventDefault()
-        const xMove =
-          e.targetTouches[0].clientX - dragOptionRef.current.startingClientX
-        const yMove =
-          e.targetTouches[0].clientY - dragOptionRef.current.startingClientY
-        if (Math.abs(xMove) > DRAG_SENSITIVITY) {
-          setStatus("dragging")
-        } else if (Math.abs(yMove) > DRAG_SENSITIVITY) {
-          setStatus("clickCanceled")
-        }
+        const xMove = e.targetTouches[0].clientX - dragOptionRef.current.startingClientX
+        const yMove = e.targetTouches[0].clientY - dragOptionRef.current.startingClientY
+        if (Math.abs(xMove) > DRAG_SENSITIVITY) setStatus("dragging")
+        else if (Math.abs(yMove) > DRAG_SENSITIVITY) setStatus("clickCanceled")
       } else if (status === "dragging") {
         e.preventDefault()
         dragging(
@@ -215,23 +195,18 @@ export const Gallery = () => {
     const slide = slideRef.current
 
     if (status === "clicked") {
-      if (clickMove === "left") {
+      if (clickMove === "left")
         move(slide, (slide + CAROUSEL_ITEMS.length - 1) % CAROUSEL_ITEMS.length)
-      } else if (clickMove === "right") {
+      else if (clickMove === "right")
         move(slide, (slide + 1) % CAROUSEL_ITEMS.length)
-      } else {
-        setStatus("stationary")
-      }
-    } else if (status === "dragging") {
+      else setStatus("stationary")
+    } else if (status === "dragging")
       dragEnd(slide, dragOptionRef.current, carouselRef.current.clientWidth)
-    } else if (status === "clickCanceled") {
-      setStatus("stationary")
-    }
+    else if (status === "clickCanceled") setStatus("stationary")
   }, [dragEnd, move])
 
   useEffect(() => {
     const carouselElement = carouselRef.current
-
     window.addEventListener("mousemove", onMouseMove)
     carouselElement.addEventListener("touchmove", onTouchMove)
     window.addEventListener("mouseup", onMouseTouchUp)
@@ -244,22 +219,10 @@ export const Gallery = () => {
     }
   }, [onMouseMove, onTouchMove, onMouseTouchUp])
 
-  const onIndicatorClick = useCallback(
-    (status: Status, srcIdx: number, dstIdx: number) => {
-      if (status !== "stationary" || srcIdx === dstIdx) return
-      move(srcIdx, dstIdx)
-    },
-    [move],
-  )
-
   const transformStyle = useMemo(() => {
-    switch (status) {
-      case "dragging":
-      case "dragEnding":
-        return { transform: `translateX(${dragOption.currentTranslateX}px)` }
-      default:
-        return {}
-    }
+    if (["dragging", "dragEnding"].includes(status))
+      return { transform: `translateX(${dragOption.currentTranslateX}px)` }
+    return {}
   }, [status, dragOption])
 
   const transformClass = useMemo(() => {
@@ -276,6 +239,14 @@ export const Gallery = () => {
     }
   }, [status])
 
+  // Lightbox
+  const [lightboxOpen, setLightboxOpen] = useState(false)
+  const [lightboxIndex, setLightboxIndex] = useState(0)
+  const onCarouselImageClick = (idx: number) => {
+    setLightboxIndex(idx)
+    setLightboxOpen(true)
+  }
+
   return (
     <LazyDiv className="card gallery">
       <h2 className="english">Gallery</h2>
@@ -284,12 +255,7 @@ export const Gallery = () => {
           className="carousel"
           ref={carouselRef}
           onMouseDown={(e) =>
-            click(
-              statusRef.current,
-              e.clientX,
-              e.clientY,
-              e.currentTarget.clientWidth,
-            )
+            click(statusRef.current, e.clientX, e.clientY, e.currentTarget.clientWidth)
           }
           onTouchStart={(e) =>
             click(
@@ -315,8 +281,12 @@ export const Gallery = () => {
             {status === "moving-left" &&
               CAROUSEL_ITEMS.slice(moveOption.dstIdx, moveOption.srcIdx + 1)}
             {["stationary", "clicked", "clickCanceled"].includes(status) &&
-              CAROUSEL_ITEMS[slide]}
+              <div onClick={() => onCarouselImageClick(slide)}>
+                {CAROUSEL_ITEMS[slide]}
+              </div>}
           </div>
+
+          {/* 좌우 버튼 복원 */}
           <div className="carousel-control">
             <div
               className="control left"
@@ -342,21 +312,11 @@ export const Gallery = () => {
             </div>
           </div>
         </div>
-        <div className="carousel-indicator">
-          {CAROUSEL_ITEMS.map((_, idx) => (
-            <button
-              key={idx}
-              className={`indicator${idx === slide ? " active" : ""}`}
-              onClick={() =>
-                onIndicatorClick(statusRef.current, slideRef.current, idx)
-              }
-            />
-          ))}
-        </div>
       </div>
 
       <div className="break" />
 
+      {/* 전체보기 버튼 */}
       <Button
         onClick={() =>
           openModal({
@@ -364,27 +324,22 @@ export const Gallery = () => {
             closeOnClickBackground: true,
             header: <div className="title">사진 전체보기</div>,
             content: (
-              <>
-                <div className="photo-list">
-                  {GALLERY_IMAGES.map((image, idx) => (
-                    <img
-                      key={idx}
-                      src={image}
-                      alt={`${idx}`}
-                      draggable={false}
-                      onClick={() => {
-                        if (statusRef.current === "stationary") {
-                          if (idx !== slideRef.current) {
-                            move(slideRef.current, idx)
-                          }
-                          closeModal()
-                        }
-                      }}
-                    />
-                  ))}
-                </div>
-                <div className="break" />
-              </>
+              <div className="photo-list">
+                {GALLERY_IMAGES.map((image, idx) => (
+                  <img
+                    key={idx}
+                    src={image}
+                    alt={`${idx}`}
+                    draggable={false}
+                    onClick={() => {
+                      if (statusRef.current === "stationary") {
+                        if (idx !== slideRef.current) move(slideRef.current, idx)
+                        closeModal()
+                      }
+                    }}
+                  />
+                ))}
+              </div>
             ),
             footer: (
               <Button
@@ -400,6 +355,15 @@ export const Gallery = () => {
       >
         사진 전체보기
       </Button>
+
+      {/* Lightbox (화면 전체보기) */}
+      <Lightbox
+        open={lightboxOpen}
+        index={lightboxIndex}
+        close={() => setLightboxOpen(false)}
+        slides={GALLERY_IMAGES.map((src) => ({ src }))}
+        plugins={[Zoom]}
+      />
     </LazyDiv>
   )
 }
