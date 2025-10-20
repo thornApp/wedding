@@ -11,6 +11,18 @@ $transition-duration: 0.3s;
   }
 }
 
+.yarl__container {
+  background-color: #fff !important;
+}
+
+.yarl__slide_image {
+  box-shadow: none !important;
+}
+
+.yarl__button {
+  color: #000 !important;
+}
+
 .gallery {
   .carousel-wrapper {
     display: flex;
