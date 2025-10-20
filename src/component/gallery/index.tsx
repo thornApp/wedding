@@ -171,19 +171,23 @@ export const Gallery = () => {
   const onTouchMove = useCallback(
     (e: TouchEvent) => {
       const status = statusRef.current
+      const touch = e.targetTouches[0]
+      const xMove = touch.clientX - dragOptionRef.current.startingClientX
+      const yMove = touch.clientY - dragOptionRef.current.startingClientY
+
       if (status === "clicked") {
-        e.preventDefault()
-        const xMove = e.targetTouches[0].clientX - dragOptionRef.current.startingClientX
-        const yMove = e.targetTouches[0].clientY - dragOptionRef.current.startingClientY
-        if (Math.abs(xMove) > DRAG_SENSITIVITY) setStatus("dragging")
-        else if (Math.abs(yMove) > DRAG_SENSITIVITY) setStatus("clickCanceled")
+        // 수평 이동이 감지되면 드래그로 전환
+        if (Math.abs(xMove) > DRAG_SENSITIVITY && Math.abs(xMove) > Math.abs(yMove)) {
+          e.preventDefault()
+          setStatus("dragging")
+        } else if (Math.abs(yMove) > DRAG_SENSITIVITY && Math.abs(yMove) > Math.abs(xMove)) {
+          // 세로로 많이 움직이면 클릭 취소
+          setStatus("clickCanceled")
+        }
       } else if (status === "dragging") {
+        // 이미 드래그 중이면 스크롤 방지 (가로 드래그 중)
         e.preventDefault()
-        dragging(
-          dragOptionRef.current,
-          e.targetTouches[0].clientX,
-          carouselRef.current.clientWidth,
-        )
+        dragging(dragOptionRef.current, touch.clientX, carouselRef.current.clientWidth)
       }
     },
     [dragging],
